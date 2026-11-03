@@ -1,0 +1,10 @@
+.git
+.github
+.env
+node_modules
+tests
+k8s
+TP*
+*.md
+Dockerfile
+.dockerignore
