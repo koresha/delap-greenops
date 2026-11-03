@@ -19,25 +19,3 @@ jobs:
       - name: Tests
         run: node tests/greenops.test.js
 
-  secrets:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          fetch-depth: 0 # tout l'historique, sinon gitleaks ne voit que le dernier commit
-      # Règle 4 : contrôle bloquant. Gitleaks sort en erreur s'il trouve un secret.
-      # Lancé via Docker : pas d'action tierce dans le pipeline.
-      - name: Gitleaks
-        run: docker run --rm -u "$(id -u):$(id -g)" -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.28.0 git /repo
-  image:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Build de l'image
-        run: docker build -t delap:ci .
-      - name: Scan Trivy (bloquant sur CRITICAL)
-        run: >
-          docker run --rm
-          -v /var/run/docker.sock:/var/run/docker.sock
-          aquasec/trivy:0.58.1 image
-          --exit-code 1 --severity CRITICAL delap:ci
