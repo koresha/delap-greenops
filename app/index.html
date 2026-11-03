@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DELAP · Calculateur GreenOps</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="logo">DELAP</div>
+  <p class="tagline">Votre matériel recyclé, en chiffres</p>
+</header>
+<main>
+  <section class="card">
+    <h1>Combien avez-vous recyclé ?</h1>
+    <form id="form">
+      <label>Ordinateurs portables <input type="number" name="laptop" min="0" value="10"></label>
+      <label>Ordinateurs fixes <input type="number" name="desktop" min="0" value="5"></label>
+      <label>Écrans <input type="number" name="screen" min="0" value="8"></label>
+      <label>Serveurs <input type="number" name="server" min="0" value="1"></label>
+      <button type="submit">Calculer</button>
+    </form>
+  </section>
+  <section class="card results" id="results" hidden>
+    <h2>Impact évité</h2>
+    <div class="stats">
+      <div><strong id="co2">0</strong><span>kg CO₂e</span></div>
+      <div><strong id="waste">0</strong><span>kg de déchets</span></div>
+      <div><strong id="trees">0</strong><span>arbres / an</span></div>
+    </div>
+    <p class="note">Ordres de grandeur pédagogiques, à partir de l'empreinte de fabrication moyenne de chaque appareil.</p>
+  </section>
+</main>
+<footer>DELAP · Service GreenOps · <span id="version"></span></footer>
+<script src="config.js"></script>
+<script src="greenops.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
