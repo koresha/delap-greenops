@@ -13,7 +13,9 @@ spec:
     spec:
       containers:
         - name: web
-          image: ghcr.io/koresha/delap-greenops:latest
+          # Image construite au TP4 et chargée dans kind (kind load docker-image delap:local)
+          image: delap:local
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           resources:

@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Hook pre-commit DELAP (TP2) : refuse le commit si gitleaks trouve un secret
+# dans les fichiers indexés (git add). gitleaks tourne en Docker, rien à installer.
+#
+# Installation (depuis la racine du dépôt) :
+#   cp TP2/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# Désactivation ponctuelle (à éviter) : git commit --no-verify
+
+set -u
+GITLEAKS_IMAGE="${GITLEAKS_IMAGE:-ghcr.io/gitleaks/gitleaks:v8.28.0}"
+REPO="$(git rev-parse --show-toplevel)"
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "pre-commit : docker introuvable, impossible de lancer gitleaks." >&2
+  exit 1
+fi
+
+# Git Bash (Windows) : empêche la conversion de /repo en chemin Windows.
+export MSYS_NO_PATHCONV=1
+
+echo "pre-commit : scan gitleaks des fichiers indexés…"
+docker run --rm -v "$REPO:/repo" "$GITLEAKS_IMAGE" \
+  git /repo --staged --no-banner --redact
+code=$?
+
+if [ "$code" -ne 0 ]; then
+  echo "" >&2
+  echo "COMMIT REFUSÉ : gitleaks a trouvé un secret dans les fichiers indexés." >&2
+  echo "Retirez la valeur du fichier (variable d'environnement, .env ignoré), puis recommencez." >&2
+  exit 1
+fi
+
+echo "pre-commit : aucun secret, commit autorisé."
+exit 0

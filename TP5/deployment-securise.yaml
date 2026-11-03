@@ -1,0 +1,33 @@
+# Corrigé TP5 : deployment DELAP durci (compatible Pod Security "restricted").
+# À copier dans k8s/deployment.yaml (ou à appliquer avec kubectl apply -f).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: delap
+  labels: { app: delap }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: delap }
+  template:
+    metadata:
+      labels: { app: delap }
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: web
+          image: delap:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests: { cpu: 50m, memory: 32Mi }
+            limits: { cpu: 200m, memory: 64Mi }
